@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MY STORE</title>
+<title>dr1ft_shop</title>
 
 <style>
 
@@ -19,6 +19,40 @@ body {
     background: #0b0b0d;
     color: white;
     min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    background:
+        radial-gradient(
+            ellipse 180px 70% at 0% 50%,
+            rgba(120, 0, 0, 0.26) 0%,
+            rgba(80, 0, 0, 0.13) 35%,
+            rgba(0, 0, 0, 0) 100%
+        ),
+        radial-gradient(
+            ellipse 180px 70% at 100% 50%,
+            rgba(120, 0, 0, 0.26) 0%,
+            rgba(80, 0, 0, 0.13) 35%,
+            rgba(0, 0, 0, 0) 100%
+        );
+}
+
+    .header,
+.categories,
+.products,
+.modal,
+.side-menu,
+.menu-button {
+    position: relative;
+    z-index: 1;
 }
 
 .header {
@@ -30,11 +64,17 @@ body {
     z-index: 10;
 }
 
+  
 .logo {
+    font-family: "Arial Narrow", Arial, sans-serif;
     font-size: 28px;
-    font-weight: 800;
-    letter-spacing: 2px;
+    font-weight: 700;
+    letter-spacing: 4px;
+
+    text-align: center;
+
     margin-bottom: 18px;
+    margin-left: 0;
 }
 
 .search {
@@ -148,55 +188,98 @@ body {
 .modal-content {
     background: #151518;
     width: 100%;
-    max-height: 92vh;
+    max-width: none;
+    max-height: 90vh;
     overflow-y: auto;
     border-radius: 24px 24px 0 0;
     padding-bottom: 25px;
     animation: slideUp 0.2s ease;
+    margin: 0;
 }
-
 @keyframes slideUp {
     from {
-        transform: translateY(100%);
+        transform: translateY(30px);
+        opacity: 0;
     }
 
     to {
         transform: translateY(0);
+        opacity: 1;
     }
+}
+
+    .modal-image-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
 .modal-image {
     width: 100%;
-    max-height: 430px;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
+    border-radius: 20px 20px 0 0;
+    display: block;
 }
-
+    
 .modal-info {
-    padding: 20px;
+    padding: 20px 20px 10px;
 }
 
 .modal-name {
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 800;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    line-height: 1.15;
 }
 
 .modal-price {
-    font-size: 22px;
+    font-size: 21px;
     font-weight: 700;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
+    letter-spacing: 0.2px;
 }
 
 .modal-description {
     color: #aaa;
+    font-size: 14px;
     line-height: 1.5;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .sizes-title {
     font-size: 14px;
     color: #aaa;
     margin-bottom: 10px;
+}
+
+    .colors {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 5px 0 12px;
+    margin-bottom: 5px;
+}
+
+.color-image {
+    width: 58px;
+    height: 58px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.color-image:hover {
+    transform: scale(1.05);
+}
+
+.color-image:active {
+    transform: scale(0.95);
 }
 
 .sizes {
@@ -210,22 +293,44 @@ body {
     background: #202024;
     border: 1px solid #303035;
     color: white;
-    padding: 10px 15px;
-    border-radius: 10px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.15s ease;
+}
+    .size.selected {
+    background: white;
+    color: black;
+    border-color: white;
+    transform: scale(1.03);
 }
 
+
 .order {
-    width: 100%;
+    width: 85%;
+    margin: 0 auto;
+    display: block;
     border: none;
     background: white;
     color: black;
-    padding: 16px;
-    border-radius: 14px;
-    font-size: 16px;
+    padding: 7px;
+    border-radius: 10px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
+    transition: 0.15s ease;
+}
+    
+    .order:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
 }
 
+.order:active {
+    transform: scale(0.98);
+}
+    
 .close {
     position: absolute;
     right: 15px;
@@ -240,24 +345,109 @@ body {
     cursor: pointer;
 }
 
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background: #151518;
+    z-index: 250;
+    padding: 80px 20px 20px;
+    transform: translateX(-100%);
+    transition: 0.25s ease;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.4);
+
+}
+
+   .menu-button {
+    position: fixed;
+    top: 22px;
+    left: 18px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 26px;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 99999;
+}
+
+    
+.menu-button.open {
+    position: fixed;
+    z-index: 1000;
+}
+
+.side-menu.show {
+    transform: translateX(0);
+}
+
+.side-menu-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.side-menu button {
+    width: 100%;
+    background: #202024;
+    border: 1px solid #303035;
+    color: white;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+   
+    
 </style>
 </head>
 
 <body>
 
+
+<button class="menu-button" onclick="openMenu()" id="menuButton">☰</button>
+
 <header class="header">
 
     <div class="logo">
-        MY STORE
+        dr1ft_shop
+    </div>
+    
+</header>
+    
+    <div id="sideMenu" class="side-menu">
+
+
+
+        <input
+    class="search"
+    id="search"
+    placeholder="🔍 Поиск товаров..."
+>
+
+    <div class="side-menu-title">
+        Бренды
     </div>
 
-    <input
-        class="search"
-        id="search"
-        placeholder="🔍 Поиск товаров..."
-    >
+    <button onclick="filterBrand('all')">Все товары</button>
+    <button onclick="filterBrand('Balenciaga')">Balenciaga</button>
+    <button onclick="filterBrand('Fear Of God')">Fear Of God</button>
+    <button onclick="filterBrand('Maison Margiela')">Maison Margiela</button>
+    <button onclick="filterBrand('ERD')">ERD</button>
+    <button onclick="filterBrand('Amiri')">Amiri</button>
+    <button onclick="filterBrand('Acne Studios')">Acne Studios</button>
 
-</header>
+</div>
 
 
 <div class="categories">
@@ -283,144 +473,11 @@ body {
 
 <main class="products" id="products">
 
-    <!-- ТОВАР 1 -->
-
-    <div
-        class="product"
-        data-category="hoodies"
-        data-name="Oversized Hoodie"
-        onclick="openProduct(0)"
-    >
-
-        <img
-            class="product-image"
-            src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800"
-        >
-
-        <div class="product-info">
-
-            <div class="product-name">
-                Oversized Hoodie
-            </div>
-
-            <div class="product-price">
-                $120
-            </div>
-
-            <div class="product-category">
-                Худи
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ТОВАР 2 -->
-
-    <div
-        class="product"
-        data-category="shoes"
-        data-name="Runner Sneakers"
-        onclick="openProduct(1)"
-    >
-
-        <img
-            class="product-image"
-            src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800"
-        >
-
-        <div class="product-info">
-
-            <div class="product-name">
-                Runner Sneakers
-            </div>
-
-            <div class="product-price">
-                $250
-            </div>
-
-            <div class="product-category">
-                Обувь
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ТОВАР 3 -->
-
-    <div
-        class="product"
-        data-category="tshirts"
-        data-name="Basic T-Shirt"
-        onclick="openProduct(2)"
-    >
-
-        <img
-            class="product-image"
-            src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
-        >
-
-        <div class="product-info">
-
-            <div class="product-name">
-                Basic T-Shirt
-            </div>
-
-            <div class="product-price">
-                $60
-            </div>
-
-            <div class="product-category">
-                Футболки
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ТОВАР 4 -->
-
-    <div
-        class="product"
-        data-category="hoodies"
-        data-name="Black Zip Hoodie"
-        onclick="openProduct(3)"
-    >
-
-        <img
-            class="product-image"
-            src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800"
-        >
-
-        <div class="product-info">
-
-            <div class="product-name">
-                Black Zip Hoodie
-            </div>
-
-            <div class="product-price">
-                $140
-            </div>
-
-            <div class="product-category">
-                Худи
-            </div>
-
-        </div>
-
-    </div>
-
-
     <div class="empty" id="empty">
         Ничего не найдено
     </div>
 
 </main>
-
 
 <!-- ОКНО ТОВАРА -->
 
@@ -432,10 +489,12 @@ body {
             ×
         </button>
 
-        <img
-            class="modal-image"
-            id="modalImage"
-        >
+       <div class="modal-image-container">
+    <img
+        class="modal-image"
+        id="modalImage"
+    >
+</div>
 
         <div class="modal-info">
 
@@ -454,16 +513,20 @@ body {
                 id="modalDescription"
             ></div>
 
+            <div class="colors"></div>
+
             <div class="sizes-title">
                 Размер
             </div>
 
             <div class="sizes">
 
-                <button class="size">S</button>
-                <button class="size">M</button>
-                <button class="size">L</button>
-                <button class="size">XL</button>
+    <button class="size" onclick="selectSize(this)">S</button>
+    <button class="size" onclick="selectSize(this)">M</button>
+    <button class="size" onclick="selectSize(this)">L</button>
+    <button class="size" onclick="selectSize(this)">XL</button>
+
+</div>
 
             </div>
 
@@ -483,37 +546,95 @@ body {
 
 <script>
 
-const products = [
+let selectedSize = "";
 
-    {
-        name: "Oversized Hoodie",
-        price: "$120",
-        image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=1000",
-        description: "Объёмное худи свободного кроя. Плотный материал, минималистичный дизайн."
-    },
+function selectSize(button) {
 
-    {
-        name: "Runner Sneakers",
-        price: "$250",
-        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1000",
-        description: "Массивные кроссовки в современном стиле."
-    },
+    document.querySelectorAll(".size").forEach(btn => {
+        btn.classList.remove("selected");
+    });
 
-    {
-        name: "Basic T-Shirt",
-        price: "$60",
-        image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=1000",
-        description: "Базовая футболка свободного кроя."
-    },
+    button.classList.add("selected");
 
-    {
-        name: "Black Zip Hoodie",
-        price: "$140",
-        image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=1000",
-        description: "Чёрное худи на молнии."
+    selectedSize = button.textContent;
+
+}
+
+let products = [];
+
+async function loadProductsFromSupabase() {
+    const { data, error } = await supabaseClient
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+    if (error) {
+        console.error("Ошибка загрузки товаров:", error);
+        return;
     }
 
-];
+    products = data;
+
+    console.log("Товары загружены из Supabase:", products);
+
+    renderCatalogProducts();
+}
+
+    function renderCatalogProducts() {
+
+    const container = document.getElementById("products");
+
+    const empty = document.getElementById("empty");
+
+    container.querySelectorAll(".product").forEach(product => {
+        product.remove();
+    });
+
+    products.forEach((product, index) => {
+
+        const card = document.createElement("div");
+
+        card.className = "product";
+
+        card.dataset.category = product.category || "";
+        card.dataset.brand = product.brand || "";
+        card.dataset.name = product.name || "";
+
+        card.onclick = function () {
+            openProduct(index);
+        };
+
+        card.innerHTML = `
+            <img
+                class="product-image"
+                src="${product.image}"
+                alt="${product.name}"
+            >
+
+            <div class="product-info">
+
+                <div class="product-name">
+                    ${product.name}
+                </div>
+
+                <div class="product-price">
+                    ${product.price}
+                </div>
+
+                <div class="product-category">
+                    ${product.category === "hoodies" ? "Худи" :
+                      product.category === "shoes" ? "Обувь" :
+                      product.category === "tshirts" ? "Футболки" :
+                      product.category === "jackets" ? "Куртки" :
+                      ""}
+                </div>
+
+            </div>
+        `;
+
+        container.insertBefore(card, empty);
+    });
+}
 
 
 function openProduct(index) {
@@ -528,6 +649,52 @@ function openProduct(index) {
 
     document.getElementById("modalDescription").textContent = product.description;
 
+    const colorsContainer = document.querySelector(".colors");
+
+    colorsContainer.innerHTML = "";
+
+    if (product.colors) {
+
+        product.colors.forEach(image => {
+
+            const colorImage = document.createElement("img");
+
+            colorImage.src = image;
+
+            colorImage.className = "color-image";
+
+            colorImage.onclick = function() {
+                document.getElementById("modalImage").src = image;
+            };
+
+            colorsContainer.appendChild(colorImage);
+
+        });
+
+    }
+
+    const sizesContainer = document.querySelector(".sizes");
+
+    sizesContainer.innerHTML = "";
+
+    product.sizes.forEach(size => {
+
+        const button = document.createElement("button");
+
+        button.className = "size";
+
+        button.textContent = size;
+
+        button.onclick = function() {
+            selectSize(this);
+        };
+
+        sizesContainer.appendChild(button);
+
+    });
+
+    selectedSize = "";
+
     document.getElementById("modal").classList.add("show");
 
 }
@@ -539,10 +706,47 @@ function closeProduct() {
 
 }
 
+  function openMenu() {
 
+    const menu = document.getElementById("sideMenu");
+    const button = document.getElementById("menuButton");
+
+    menu.classList.toggle("show");
+    button.classList.toggle("open");
+
+    if (menu.classList.contains("show")) {
+        button.textContent = "←";
+    } else {
+        button.textContent = "☰";
+    }
+}
+
+ function filterBrand(brand) {
+
+    const products = document.querySelectorAll(".product");
+
+    products.forEach(product => {
+
+        if (brand === "all" || product.dataset.brand === brand) {
+            product.style.display = "";
+        } else {
+            product.style.display = "none";
+        }
+
+    });
+
+    document.getElementById("sideMenu").classList.remove("show");
+    document.getElementById("menuButton").textContent = "☰";
+}
+    
 function orderProduct() {
 
-    alert("Для заказа напишите нам в Telegram.");
+    if (!selectedSize) {
+        alert("Пожалуйста, выберите размер.");
+        return;
+    }
+
+    window.open("https://t.me/VampManagerr", "_blank");
 
 }
 
@@ -617,6 +821,21 @@ document
     });
 
 
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+    const SUPABASE_URL = "https://xwsfzwjblqgwlkxwlokp.supabase.co";
+
+    const SUPABASE_KEY = "sb_publishable_JuDfyrkFwTumjlYEYs1edA_woFh_nI_";
+
+    const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+loadProductsFromSupabase();
+        
 </script>
 
 </body>
