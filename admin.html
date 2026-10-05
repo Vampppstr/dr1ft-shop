@@ -204,14 +204,6 @@
                 ＋ Добавить товар
             </button>
 
-            <button
-    class="admin-button"
-    onclick="uploadProductsToSupabase()"
-    style="margin-top: 10px;"
->
-    ☁️ Загрузить товары в Supabase
-</button>
-
         </div>
 
         <div class="admin-card">
@@ -239,33 +231,7 @@
 
     <script>
 
-        const savedProducts = localStorage.getItem("vampProducts");
-
-        const products = [
-    {
-        name: "ERD Hoodie",
-        price: "2600 грн / $33",
-        image: "photo_5834783088632860965_x.jpg"
-    },
-    {
-        name: "Maison Margiela Replica Gats",
-        price: "3690 грн / $83",
-        image: "photo_6028305136645508682_x.jpg"
-    },
-    {
-        name: "Balenciaga Tee",
-        price: "1750 грн / $33",
-        image: "photo_5981002711899508346_y.jpg"
-    }
-];
-
-        if (savedProducts) {
-    products.splice(
-        0,
-        products.length,
-        ...JSON.parse(savedProducts)
-    );
-}
+        const products = [];
 
 const productsList = document.getElementById("productsList");
         console.log("PRODUCTS LIST:", productsList);
@@ -660,52 +626,7 @@ function renderProducts() {
         SUPABASE_KEY
     );
 
-async function uploadProductsToSupabase() {
 
-    const { data: existingProducts, error: checkError } =
-        await supabaseClient
-            .from("products")
-            .select("name");
-
-    if (checkError) {
-        console.error("Ошибка проверки товаров:", checkError);
-        alert("Не удалось проверить товары в Supabase.");
-        return;
-    }
-
-    const existingNames = existingProducts.map(product => product.name);
-
-    const productsForSupabase = products
-        .filter(product => !existingNames.includes(product.name))
-        .map(product => ({
-            name: product.name,
-            price: product.price,
-            image: product.image,
-            sizes: product.sizes || [],
-            colors: product.colors || null
-        }));
-
-    if (productsForSupabase.length === 0) {
-        alert("Все товары уже есть в Supabase.");
-        return;
-    }
-
-    const { data, error } = await supabaseClient
-        .from("products")
-        .insert(productsForSupabase)
-        .select();
-
-    if (error) {
-        console.error("Ошибка загрузки товаров:", error);
-        alert("Ошибка загрузки товаров. Смотри Console.");
-        return;
-    }
-
-    console.log("Товары загружены в Supabase:", data);
-    alert(
-        "Загружено товаров: " + productsForSupabase.length
-    );
-}
 
     checkAdminAuth();
 
