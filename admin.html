@@ -1,1 +1,732 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
 
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Vamp Store — Admin</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #0b0b0d;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .admin {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .admin-card {
+            background: #151518;
+            border: 1px solid #252529;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .admin-card h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .admin-button {
+            width: 100%;
+            background: white;
+            color: black;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .admin-button:hover {
+            opacity: 0.9;
+        }
+        .logout-button {
+    display: block;
+    width: auto;
+    margin: 35px auto 10px;
+
+    background: #8b0000;
+    color: white;
+
+    border: 1px solid #a80000;
+    padding: 9px 22px;
+    border-radius: 9px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.logout-button:hover {
+    background: #a8000a;
+    transform: scale(1.03);
+}
+
+.logout-button:active {
+    transform: scale(0.97);
+}
+
+        .edit-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 9999;
+}
+
+.edit-modal.show {
+    display: flex;
+}
+
+.edit-modal-content {
+    width: 100%;
+    max-width: 500px;
+    background: #151518;
+    border: 1px solid #2a2a2f;
+    border-radius: 22px;
+    padding: 25px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.edit-modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.edit-modal-content input {
+    width: 100%;
+    box-sizing: border-box;
+    background: #202024;
+    border: 1px solid #303035;
+    color: white;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    outline: none;
+}
+
+.edit-modal-content input:focus {
+    border-color: white;
+}
+
+.edit-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 10px;
+    background: #202024;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.edit-save {
+    width: 100%;
+    background: white;
+    color: black;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="admin">
+
+        <div class="logo">
+            dr1ft_shop
+        </div>
+
+        <div class="subtitle">
+            Панель управления
+        </div>
+        
+
+        <div class="admin-card">
+
+            <h2>
+                Товары
+            </h2>
+
+            <div id="productsList"></div>
+
+            <button
+                class="admin-button"
+                onclick="addProduct()"
+            >
+                ＋ Добавить товар
+            </button>
+
+            <button
+    class="admin-button"
+    onclick="uploadProductsToSupabase()"
+    style="margin-top: 10px;"
+>
+    ☁️ Загрузить товары в Supabase
+</button>
+
+        </div>
+
+        <div class="admin-card">
+
+            <h2>
+                Заказы
+            </h2>
+
+            <div style="color:#888;">
+                Пока заказов нет
+            </div>
+
+        </div>
+
+        <button
+    class="logout-button"
+    onclick="logoutAdmin()"
+>
+    Выйти
+</button>
+
+    </div>
+
+    
+
+    <script>
+
+        const savedProducts = localStorage.getItem("vampProducts");
+
+        const products = [
+    {
+        name: "ERD Hoodie",
+        price: "2600 грн / $33",
+        image: "photo_5834783088632860965_x.jpg"
+    },
+    {
+        name: "Maison Margiela Replica Gats",
+        price: "3690 грн / $83",
+        image: "photo_6028305136645508682_x.jpg"
+    },
+    {
+        name: "Balenciaga Tee",
+        price: "1750 грн / $33",
+        image: "photo_5981002711899508346_y.jpg"
+    }
+];
+
+        if (savedProducts) {
+    products.splice(
+        0,
+        products.length,
+        ...JSON.parse(savedProducts)
+    );
+}
+
+const productsList = document.getElementById("productsList");
+        console.log("PRODUCTS LIST:", productsList);
+
+        async function loadProductsFromSupabase() {
+
+    const { data, error } = await supabaseClient
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+    if (error) {
+        console.error("Ошибка загрузки товаров из Supabase:", error);
+        return;
+    }
+
+    products.splice(
+        0,
+        products.length,
+        ...data
+    );
+
+            console.log("SUPABASE PRODUCTS:", data);
+            console.log("PRODUCTS BEFORE RENDER:", products);
+
+    renderProducts();
+}
+
+    async function addProduct() {
+
+    const name = prompt("Введите название товара:");
+
+    if (!name) {
+        return;
+    }
+
+    const price = prompt("Введите цену товара:");
+
+    if (!price) {
+        return;
+    }
+
+    const image = prompt("Введите имя файла изображения:");
+
+    if (!image) {
+        return;
+    }
+
+    const sizesInput = prompt(
+        "Введите размеры через запятую (например: S, M, L, XL):"
+    );
+
+    if (!sizesInput) {
+        return;
+    }
+
+    const sizes = sizesInput
+        .split(",")
+        .map(size => size.trim())
+        .filter(size => size);
+
+    const { data, error } = await supabaseClient
+        .from("products")
+        .insert({
+            name: name,
+            price: price,
+            image: image,
+            sizes: sizes
+        })
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Ошибка добавления товара:", error);
+        alert("Не удалось добавить товар.");
+        return;
+    }
+
+    console.log("Товар добавлен в Supabase:", data);
+
+    await loadProductsFromSupabase();
+
+    alert("Товар успешно добавлен!");
+}
+
+        let editingProduct = null;
+
+function editProduct(name) {
+
+    const product = products.find(
+        product => product.name === name
+    );
+
+    if (!product) {
+        return;
+    }
+
+    if (!product.id) {
+        alert("У товара нет ID в Supabase.");
+        console.error("Товар без ID:", product);
+        return;
+    }
+
+    editingProduct = product;
+
+    document.getElementById("editName").value = product.name;
+    document.getElementById("editPrice").value = product.price;
+    document.getElementById("editImage").value = product.image;
+
+    document.getElementById("editSizes").value = product.sizes
+        ? product.sizes.join(", ")
+        : "";
+
+    const imagePreview =
+        document.getElementById("editImagePreview");
+
+    imagePreview.src = product.image;
+    imagePreview.style.display = "block";
+
+    document.getElementById("editModal").classList.add("show");
+}
+
+        function updateImagePreview() {
+
+    const image = document.getElementById("editImage").value.trim();
+    const preview = document.getElementById("editImagePreview");
+
+    if (!image) {
+        preview.style.display = "none";
+        return;
+    }
+
+    preview.src = image;
+    preview.style.display = "block";
+
+}
+
+        function closeEditModal() {
+
+    document.getElementById("editModal").classList.remove("show");
+
+}
+
+
+        async function saveEditProduct() {
+
+    if (!editingProduct) {
+        return;
+    }
+
+    const newName = document.getElementById("editName").value.trim();
+    const newPrice = document.getElementById("editPrice").value.trim();
+    const newImage = document.getElementById("editImage").value.trim();
+    const sizesInput = document.getElementById("editSizes").value.trim();
+
+    if (!newName || !newPrice || !newImage || !sizesInput) {
+        alert("Заполните все поля.");
+        return;
+    }
+
+    const newSizes = sizesInput
+        .split(",")
+        .map(size => size.trim())
+        .filter(size => size);
+
+    const { data, error } = await supabaseClient
+        .from("products")
+        .update({
+            name: newName,
+            price: newPrice,
+            image: newImage,
+            sizes: newSizes
+        })
+        .eq("id", editingProduct.id)
+        .select();
+
+    if (error) {
+        console.error("Ошибка обновления товара:", error);
+        alert("Не удалось сохранить изменения.");
+        return;
+    }
+
+    console.log("Товар обновлён в Supabase:", data);
+
+    await loadProductsFromSupabase();
+
+    closeEditModal();
+
+    editingProduct = null;
+
+    alert("Товар успешно обновлён!");
+}
+        
+
+      async function deleteProduct(name) {
+
+    const confirmDelete = confirm(
+        "Удалить товар " + name + "?"
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    const product = products.find(
+        product => product.name === name
+    );
+
+    if (!product) {
+        return;
+    }
+
+    if (!product.id) {
+        alert("У товара нет ID в Supabase.");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("products")
+        .delete()
+        .eq("id", product.id);
+
+    if (error) {
+        console.error("Ошибка удаления товара:", error);
+        alert("Не удалось удалить товар.");
+        return;
+    }
+
+    await loadProductsFromSupabase();
+
+    alert("Товар успешно удалён!");
+}
+        
+
+function renderProducts() {
+
+    productsList.innerHTML = "";
+
+    products.forEach(product => {
+
+        productsList.innerHTML += `
+            <div style="
+                display:flex;
+                align-items:center;
+                gap:15px;
+                margin-bottom:15px;
+                padding:12px;
+                background:#202024;
+                border-radius:14px;
+            ">
+
+                <img
+                    src="${product.image}"
+                    style="
+                        width:70px;
+                        height:70px;
+                        object-fit:cover;
+                        border-radius:10px;
+                    "
+                >
+
+                <div>
+
+                    <div style="
+                        font-weight:700;
+                        margin-bottom:5px;
+                    ">
+                        ${product.name}
+                    </div>
+
+                    <div style="color:#aaa;">
+                        ${product.price}
+                    </div>
+
+                    <button
+                        onclick="editProduct('${product.name}')"
+                        style="
+                            margin-top:10px;
+                            background:white;
+                            color:black;
+                            border:none;
+                            padding:8px 12px;
+                            border-radius:8px;
+                            font-weight:700;
+                            cursor:pointer;
+                        "
+                    >
+                        ✏️ Изменить
+                    </button>
+
+                    <button
+                        onclick="deleteProduct('${product.name}')"
+                        style="
+                            margin-top:10px;
+                            margin-left:5px;
+                            background:#ff4444;
+                            color:white;
+                            border:none;
+                            padding:8px 12px;
+                            border-radius:8px;
+                            font-weight:700;
+                            cursor:pointer;
+                        "
+                    >
+                        🗑 Удалить
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+    });
+
+}
+
+        renderProducts();
+        
+    </script>
+
+    <div id="editModal" class="edit-modal">
+
+    <div class="edit-modal-content">
+
+        <button
+            class="edit-close"
+            onclick="closeEditModal()"
+        >
+            ×
+        </button>
+
+        <h2>Редактировать товар</h2>
+
+        <input
+    id="editName"
+    type="text"
+    placeholder="Название товара"
+>
+
+<input
+    id="editPrice"
+    type="text"
+    placeholder="Цена"
+>
+
+<input
+    id="editImage"
+    type="text"
+    placeholder="Имя файла изображения"
+    oninput="updateImagePreview()"
+>
+
+<img
+    id="editImagePreview"
+    style="
+        width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        border-radius: 14px;
+        margin-bottom: 15px;
+        display: none;
+        background: #202024;
+    "
+>
+
+<input
+    id="editSizes"
+    type="text"
+    placeholder="Размеры: S, M, L, XL"
+>
+
+<button
+    class="edit-save"
+    onclick="saveEditProduct()"
+>
+    💾 Сохранить изменения
+</button>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const SUPABASE_URL = "https://pzcxlrpotanlrdjsrmty.supabase.co";
+
+    const SUPABASE_KEY = "sb_publishable_LMhs7AsUt2lZtKbzI45hmA_9uyz_wTp";
+  
+    const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+async function uploadProductsToSupabase() {
+
+    const { data: existingProducts, error: checkError } =
+        await supabaseClient
+            .from("products")
+            .select("name");
+
+    if (checkError) {
+        console.error("Ошибка проверки товаров:", checkError);
+        alert("Не удалось проверить товары в Supabase.");
+        return;
+    }
+
+    const existingNames = existingProducts.map(product => product.name);
+
+    const productsForSupabase = products
+        .filter(product => !existingNames.includes(product.name))
+        .map(product => ({
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            sizes: product.sizes || [],
+            colors: product.colors || null
+        }));
+
+    if (productsForSupabase.length === 0) {
+        alert("Все товары уже есть в Supabase.");
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("products")
+        .insert(productsForSupabase)
+        .select();
+
+    if (error) {
+        console.error("Ошибка загрузки товаров:", error);
+        alert("Ошибка загрузки товаров. Смотри Console.");
+        return;
+    }
+
+    console.log("Товары загружены в Supabase:", data);
+    alert(
+        "Загружено товаров: " + productsForSupabase.length
+    );
+}
+
+    checkAdminAuth();
+
+async function checkAdminAuth() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        window.location.href = "admin-login.html";
+        return;
+    }
+
+    loadProductsFromSupabase();
+    console.log("SUPABASE LOAD STARTED");
+}
+
+    async function logoutAdmin() {
+    await supabaseClient.auth.signOut();
+    window.location.href = "admin-login.html";
+}
+    
+</script>
+    
+</body>
+</html>
