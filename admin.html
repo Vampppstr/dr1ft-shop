@@ -778,16 +778,20 @@ function closeAddModal() {
     document.getElementById("addModal").classList.remove("show");
 }
 
+   document.addEventListener("DOMContentLoaded", function () {
+
     document.getElementById("addImageFile").addEventListener("change", function () {
 
-    const file = this.files[0];
-    const fileName = document.getElementById("addFileName");
+        const file = this.files[0];
+        const fileName = document.getElementById("addFileName");
 
-    if (file) {
-        fileName.textContent = file.name;
-    } else {
-        fileName.textContent = "Фото не выбрано";
-    }
+        if (file) {
+            fileName.textContent = file.name;
+        } else {
+            fileName.textContent = "Фото не выбрано";
+        }
+
+    });
 
 });
     
