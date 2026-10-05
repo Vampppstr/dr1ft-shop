@@ -172,6 +172,98 @@
     margin-top: 5px;
 }
 
+        .add-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.add-modal.show {
+    display: flex;
+}
+
+.add-modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #151518;
+    border: 1px solid #29292e;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.add-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.add-input {
+    width: 100%;
+    background: #202024;
+    border: 1px solid #303035;
+    border-radius: 12px;
+    padding: 13px 14px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 12px;
+    font-family: Arial, sans-serif;
+}
+
+.add-input:focus {
+    border-color: #555;
+}
+
+.add-input::placeholder {
+    color: #777;
+}
+
+.add-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.add-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: #202024;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.add-save {
+    width: 100%;
+    border: none;
+    background: white;
+    color: black;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.add-save:hover {
+    opacity: 0.9;
+}
+
     </style>
 
 </head>
@@ -648,6 +740,71 @@ async function checkAdminAuth() {
 }
     
 </script>
+
+    <!-- ОКНО ДОБАВЛЕНИЯ ТОВАРА -->
+
+<div class="add-modal" id="addModal">
+
+    <div class="add-modal-content">
+
+        <button class="add-close" onclick="closeAddModal()">×</button>
+
+        <div class="add-title">
+            Добавить товар
+        </div>
+
+        <input
+            class="add-input"
+            id="addName"
+            placeholder="Название товара"
+        >
+
+        <input
+            class="add-input"
+            id="addPrice"
+            placeholder="Цена, например: 2500 грн"
+        >
+
+        <input
+            class="add-input"
+            id="addImage"
+            placeholder="Ссылка на изображение"
+        >
+
+        <textarea
+            class="add-input add-textarea"
+            id="addDescription"
+            placeholder="Описание товара"
+        ></textarea>
+
+        <input
+            class="add-input"
+            id="addSizes"
+            placeholder="Размеры: S, M, L, XL"
+        >
+
+        <input
+            class="add-input"
+            id="addCategory"
+            placeholder="Категория: hoodies, shoes, tshirts"
+        >
+
+        <input
+            class="add-input"
+            id="addBrand"
+            placeholder="Бренд"
+        >
+
+        <button
+            class="add-save"
+            onclick="saveNewProduct()"
+        >
+            ДОБАВИТЬ ТОВАР
+        </button>
+
+    </div>
+
+</div>
     
 </body>
 </html>
