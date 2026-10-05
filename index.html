@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -432,7 +432,7 @@ body::before {
         <input
     class="search"
     id="search"
-    placeholder="🔍 Поиск товаров..."
+    placeholder="🔍 Пошук товарів..."
 >
 
 
@@ -442,15 +442,15 @@ body::before {
 <div class="categories">
 
     <button class="category active" onclick="filterProducts('all', this)">
-        Все
+        Усі
     </button>
 
     <button class="category" onclick="filterProducts('hoodies', this)">
-        Худи
+        Худі
     </button>
 
     <button class="category" onclick="filterProducts('shoes', this)">
-        Обувь
+        Взуття
     </button>
 
     <button class="category" onclick="filterProducts('tshirts', this)">
@@ -463,7 +463,7 @@ body::before {
 <main class="products" id="products">
 
     <div class="empty" id="empty">
-        Ничего не найдено
+        Нічого не знайдено
     </div>
 
 </main>
@@ -505,7 +505,7 @@ body::before {
             <div class="colors"></div>
 
             <div class="sizes-title">
-                Размер
+                Розмір
             </div>
 
             <div class="sizes">
@@ -523,7 +523,7 @@ body::before {
                 class="order"
                 onclick="orderProduct()"
             >
-                ЗАКАЗАТЬ
+                ЗАМОВИТИ
             </button>
 
         </div>
@@ -611,11 +611,11 @@ async function loadProductsFromSupabase() {
                 </div>
 
                 <div class="product-category">
-                    ${product.category === "hoodies" ? "Худи" :
-                      product.category === "shoes" ? "Обувь" :
-                      product.category === "tshirts" ? "Футболки" :
-                      product.category === "jackets" ? "Куртки" :
-                      ""}
+                    ${product.category === "hoodies" ? "Худі" :
+                    product.category === "shoes" ? "Взуття" :
+                    product.category === "tshirts" ? "Футболки" :
+                    product.category === "jackets" ? "Куртки" :
+                    ""}
                 </div>
 
             </div>
@@ -731,7 +731,7 @@ function closeProduct() {
 function orderProduct() {
 
     if (!selectedSize) {
-        alert("Пожалуйста, выберите размер.");
+        alert("Будь ласка, оберіть розмір.");
         return;
     }
 
