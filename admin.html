@@ -264,6 +264,37 @@
     opacity: 0.9;
 }
 
+        .add-file-box {
+    margin-bottom: 12px;
+}
+
+.add-file-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: #202024;
+    border: 1px solid #303035;
+    border-radius: 12px;
+    padding: 13px 14px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.add-file-button:hover {
+    background: #29292e;
+}
+
+.add-file-name {
+    margin-top: 8px;
+    color: #777;
+    font-size: 12px;
+    text-align: center;
+}
+
     </style>
 
 </head>
@@ -746,6 +777,19 @@ async function checkAdminAuth() {
 function closeAddModal() {
     document.getElementById("addModal").classList.remove("show");
 }
+
+    document.getElementById("addImageFile").addEventListener("change", function () {
+
+    const file = this.files[0];
+    const fileName = document.getElementById("addFileName");
+
+    if (file) {
+        fileName.textContent = file.name;
+    } else {
+        fileName.textContent = "Фото не выбрано";
+    }
+
+});
     
 </script>
 
@@ -773,11 +817,27 @@ function closeAddModal() {
             placeholder="Цена, например: 2500 грн"
         >
 
-        <input
-            class="add-input"
-            id="addImage"
-            placeholder="Ссылка на изображение"
-        >
+       <div class="add-file-box">
+
+    <label for="addImageFile" class="add-file-button">
+        📷 Выбрать фото
+    </label>
+
+    <input
+        type="file"
+        id="addImageFile"
+        accept="image/*"
+        hidden
+    >
+
+    <div
+        class="add-file-name"
+        id="addFileName"
+    >
+        Фото не выбрано
+    </div>
+
+</div>
 
         <textarea
             class="add-input add-textarea"
