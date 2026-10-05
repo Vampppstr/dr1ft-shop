@@ -291,7 +291,7 @@
 
             <button
                 class="admin-button"
-                onclick="addProduct()"
+                onclick="openAddModal()"
             >
                 ＋ Добавить товар
             </button>
@@ -737,6 +737,14 @@ async function checkAdminAuth() {
     async function logoutAdmin() {
     await supabaseClient.auth.signOut();
     window.location.href = "admin-login.html";
+}
+
+    function openAddModal() {
+    document.getElementById("addModal").classList.add("show");
+}
+
+function closeAddModal() {
+    document.getElementById("addModal").classList.remove("show");
 }
     
 </script>
