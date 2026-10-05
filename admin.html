@@ -383,11 +383,11 @@ const productsList = document.getElementById("productsList");
     renderProducts();
 }
 
-    async function saveNewProduct() {
+        async function saveNewProduct() {
 
     const name = document.getElementById("addName").value.trim();
     const price = document.getElementById("addPrice").value.trim();
-    const image = document.getElementById("addImage").value.trim();
+    const file = document.getElementById("addImageFile").files[0];
     const description = document.getElementById("addDescription").value.trim();
     const sizesInput = document.getElementById("addSizes").value.trim();
     const category = document.getElementById("addCategory").value.trim();
@@ -398,10 +398,35 @@ const productsList = document.getElementById("productsList");
         return;
     }
 
+    if (!file) {
+        alert("Выберите фото товара.");
+        return;
+    }
+
     const sizes = sizesInput
         .split(",")
         .map(size => size.trim())
         .filter(size => size);
+
+    const fileName = `${Date.now()}_${file.name}`;
+
+    const { error: uploadError } = await supabaseClient
+        .storage
+        .from("products")
+        .upload(fileName, file);
+
+    if (uploadError) {
+        console.error("Ошибка загрузки фото:", uploadError);
+        alert("Не удалось загрузить фото.");
+        return;
+    }
+
+    const { data: publicData } = supabaseClient
+        .storage
+        .from("products")
+        .getPublicUrl(fileName);
+
+    const image = publicData.publicUrl;
 
     const { data, error } = await supabaseClient
         .from("products")
@@ -429,7 +454,8 @@ const productsList = document.getElementById("productsList");
 
     document.getElementById("addName").value = "";
     document.getElementById("addPrice").value = "";
-    document.getElementById("addImage").value = "";
+    document.getElementById("addImageFile").value = "";
+    document.getElementById("addFileName").textContent = "Фото не выбрано";
     document.getElementById("addDescription").value = "";
     document.getElementById("addSizes").value = "";
     document.getElementById("addCategory").value = "";
