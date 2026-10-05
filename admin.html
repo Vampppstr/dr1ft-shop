@@ -352,31 +352,18 @@ const productsList = document.getElementById("productsList");
     renderProducts();
 }
 
-    async function addProduct() {
+    async function saveNewProduct() {
 
-    const name = prompt("Введите название товара:");
+    const name = document.getElementById("addName").value.trim();
+    const price = document.getElementById("addPrice").value.trim();
+    const image = document.getElementById("addImage").value.trim();
+    const description = document.getElementById("addDescription").value.trim();
+    const sizesInput = document.getElementById("addSizes").value.trim();
+    const category = document.getElementById("addCategory").value.trim();
+    const brand = document.getElementById("addBrand").value.trim();
 
-    if (!name) {
-        return;
-    }
-
-    const price = prompt("Введите цену товара:");
-
-    if (!price) {
-        return;
-    }
-
-    const image = prompt("Введите имя файла изображения:");
-
-    if (!image) {
-        return;
-    }
-
-    const sizesInput = prompt(
-        "Введите размеры через запятую (например: S, M, L, XL):"
-    );
-
-    if (!sizesInput) {
+    if (!name || !price) {
+        alert("Введите название и цену товара.");
         return;
     }
 
@@ -391,7 +378,10 @@ const productsList = document.getElementById("productsList");
             name: name,
             price: price,
             image: image,
-            sizes: sizes
+            description: description,
+            sizes: sizes,
+            category: category,
+            brand: brand
         })
         .select()
         .single();
@@ -402,7 +392,17 @@ const productsList = document.getElementById("productsList");
         return;
     }
 
-    console.log("Товар добавлен в Supabase:", data);
+    console.log("Товар добавлен:", data);
+
+    closeAddModal();
+
+    document.getElementById("addName").value = "";
+    document.getElementById("addPrice").value = "";
+    document.getElementById("addImage").value = "";
+    document.getElementById("addDescription").value = "";
+    document.getElementById("addSizes").value = "";
+    document.getElementById("addCategory").value = "";
+    document.getElementById("addBrand").value = "";
 
     await loadProductsFromSupabase();
 
